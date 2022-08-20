@@ -30,6 +30,7 @@ struct UniformBufferObject {
 	alignas(16) glm::mat4 model;
 } ubo;
 
+void ao;
 
 // MAIN ! 
 class MyProject : public BaseProject {
