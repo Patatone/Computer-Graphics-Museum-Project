@@ -276,7 +276,7 @@ protected:
 
 
 
-		////////////////////////////////////// W A L L S ///////////////////////////////////////////
+		//////////////////////////////////// W A L L S ///////////////////////////////////////////
 
 		// property .pipelineLayout of a pipeline contains its layout.
 		// property .descriptorSets of a descriptor set contains its elements.
@@ -291,7 +291,7 @@ protected:
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_Walls.descriptorSets[currentImage],
+			P1.pipelineLayout, 1, 1, &DS_Walls.descriptorSets[currentImage],
 			0, nullptr);
 
 		// property .indices.size() of models, contains the number of triangles * 3 of the mesh.
@@ -299,7 +299,7 @@ protected:
 			static_cast<uint32_t>(M_Walls.indices.size()), 1, 0, 0, 0);
 
 
-		////////////////////////////////////// F L O O R ///////////////////////////////////////////
+		//////////////////////////////////////// F L O O R ///////////////////////////////////////////
 
 		VkBuffer vertexBuffers_Floor[] = { M_Floor.vertexBuffer };
 		VkDeviceSize offsets_Floor[] = { 0 };
@@ -311,7 +311,7 @@ protected:
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_Floor.descriptorSets[currentImage],
+			P1.pipelineLayout, 1, 1, &DS_Floor.descriptorSets[currentImage],
 			0, nullptr);
 
 		// property .indices.size() of models, contains the number of triangles * 3 of the mesh.
@@ -319,21 +319,15 @@ protected:
 			static_cast<uint32_t>(M_Floor.indices.size()), 1, 0, 0, 0);
 
 
+		//////////////////////////////////////// F R A M E S ///////////////////////////////////////////
 
+		//VkBuffer vertexBuffers_Frames[] = { M_Frame.vertexBuffer };
+		//VkDeviceSize offsets_Frames[] = { 0 };
 
+		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Frames, offsets_Frames);
 
-
-		DS_ART, DS_manet, DS_matisse, DS_monet, DS_munch, DS_picasso, DS_pisarro, DS_seurat, DS_vgstar, DS_vgself, DS_cezanne, DS_volpedo;
-
-		////////////////////////////////////// F R A M E S ///////////////////////////////////////////
-
-		VkBuffer vertexBuffers_Frames[] = { M_Frame.vertexBuffer };
-		VkDeviceSize offsets_Frames[] = { 0 };
-
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Frames, offsets_Frames);
-
-		vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0,
-			VK_INDEX_TYPE_UINT32);
+		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0,
+		//	VK_INDEX_TYPE_UINT32);
 
 
 
@@ -357,7 +351,7 @@ protected:
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_ART.descriptorSets[currentImage],
+			P1.pipelineLayout, 1, 1, &DS_ART.descriptorSets[currentImage],
 			0, nullptr);
 
 		vkCmdDrawIndexed(commandBuffer,
@@ -365,213 +359,213 @@ protected:
 
 		//// Manet
 
-		//VkBuffer vertexBuffers_Manet[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_Manet[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_Manet[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Manet, offsets_Manet);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_Manet[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Manet, offsets_Manet);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_manet.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_manet.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Matisse
+		////// Matisse
 
-		//VkBuffer vertexBuffers_Matisse[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_Matisse[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_Matisse[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Matisse, offsets_Matisse);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_Matisse[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Matisse, offsets_Matisse);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_matisse.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_matisse.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Monet
+		////// Monet
 
-		//VkBuffer vertexBuffers_Monet[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_Monet[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_Monet[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Monet, offsets_Monet);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_Monet[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Monet, offsets_Monet);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_monet.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_monet.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Munch
+		////// Munch
 
-		//VkBuffer vertexBuffers_Munch[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_Munch[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_Munch[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Munch, offsets_Munch);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_Munch[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Munch, offsets_Munch);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_munch.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_munch.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Picasso 
+		////// Picasso 
 
-		//VkBuffer vertexBuffers_Picasso[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_Picasso[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_Picasso[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Picasso, offsets_Picasso);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_Picasso[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Picasso, offsets_Picasso);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_picasso.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_picasso.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Pisarro
+		////// Pisarro
 
-		//VkBuffer vertexBuffers_Pisarro[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_Pisarro[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_Pisarro[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Pisarro, offsets_Pisarro);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_Pisarro[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Pisarro, offsets_Pisarro);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_pisarro.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_pisarro.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Seurat
+		////// Seurat
 
-		//VkBuffer vertexBuffers_Seurat[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_Seurat[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_Seurat[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Seurat, offsets_Seurat);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_Seurat[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Seurat, offsets_Seurat);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_seurat.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_seurat.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Van Gogh Starry Night
+		////// Van Gogh Starry Night
 
-		//VkBuffer vertexBuffers_VGStar[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_VGStar[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_VGStar[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_VGStar, offsets_VGStar);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_VGStar[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_VGStar, offsets_VGStar);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_vgstar.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_vgstar.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Van Gogh Self Portrait
+		////// Van Gogh Self Portrait
 
-		//VkBuffer vertexBuffers_VGSelf[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_VGSelf[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_VGSelf[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_VGSelf, offsets_VGSelf);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_VGSelf[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_VGSelf, offsets_VGSelf);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_vgself.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_vgself.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
 
-		//// Cezanne
+		////// Cezanne
 
-		//VkBuffer vertexBuffers_Cezanne[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_Cezanne[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_Cezanne[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Cezanne, offsets_Cezanne);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_Cezanne[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Cezanne, offsets_Cezanne);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_cezanne.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_cezanne.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Volpedo
+		////// Volpedo
 
-		//VkBuffer vertexBuffers_Volpedo[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		////VkBuffer vertexBuffers_Volpedo[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		//// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		//VkDeviceSize offsets_Volpedo[] = { 0 };
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Volpedo, offsets_Volpedo);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		////VkDeviceSize offsets_Volpedo[] = { 0 };
+		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Volpedo, offsets_Volpedo);
+		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		vkCmdBindDescriptorSets(commandBuffer,
-			VK_PIPELINE_BIND_POINT_GRAPHICS,
-			P1.pipelineLayout, 0, 1, &DS_volpedo.descriptorSets[currentImage],
-			0, nullptr);
+		////vkCmdBindDescriptorSets(commandBuffer,
+		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
+		////	P1.pipelineLayout, 1, 1, &DS_volpedo.descriptorSets[currentImage],
+		////	0, nullptr);
 
-		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		////vkCmdDrawIndexed(commandBuffer,
+		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
 	}
 
@@ -602,13 +596,6 @@ protected:
 
 		// ubo.model = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
-	   /*ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f),
-							  glm::vec3(0.0f, 0.0f, 0.0f),
-							  glm::vec3(0.0f, 0.0f, 1.0f));
-	   ubo.proj = glm::perspective(glm::radians(45.0f),
-					   swapChainExtent.width / (float) swapChainExtent.height,
-					   0.1f, 10.0f);
-	   ubo.proj[1][1] *= -1;*/
 
 		gubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f),
 			glm::vec3(0.0f, 0.0f, 0.0f),
