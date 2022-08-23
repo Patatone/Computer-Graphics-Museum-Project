@@ -82,10 +82,6 @@ protected:
 	void localInit() {
 		// Descriptor Layouts [what will be passed to the shaders]
 
-
-
-
-
 		DSLObject.init(this, {
 			// this array contains the binding:
 			// first  element : the binding number
@@ -106,85 +102,96 @@ protected:
 		// Pipelines [Shader couples]
 		// The last array, is a vector of pointer to the layouts of the sets that will
 		// be used in this pipeline. The first element will be set 0, and so on..
-		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", { &DSLObject, &DSLGlobal });
+		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", { &DSLGlobal, &DSLObject });
 
 
 		// Models, textures and Descriptors (values assigned to the uniforms)
-		M_Frame.init(this, "models/Frame_sq.obj");
+
+
+
 		M_Walls.init(this, "models/Walls.obj");
-		M_Floor.init(this, "models/Floor.obj");
-
-
-		ART.init(this, "textures/ART.png");
-		manet.init(this, "textures/Manet_Dejeuner.png");
-		matisse.init(this, "textures/Matisse_theDance.png");
-		monet.init(this, "textures/Monet-Sunrise.png");
-		munch.init(this, "textures/Munch_Scream.png");
-		picasso.init(this, "textures/Picasso_Guernica.png");
-		pisarro.init(this, "textures/pisarro_boulevard_monmarte.png");
-		seurat.init(this, "textures/Seurat_a_sunday.png");
-		vgstar.init(this, "textures/starringNight.png");
-		vgself.init(this, "textures/VanGogh_self.png");
-		cezanne.init(this, "textures/theBathers_Cezanne.png");
-		volpedo.init(this, "textures/Volpedo_FourthEstate.png");
-
 		TX_Walls.init(this, "textures/wall.png");
-		TX_Floor.init(this, "textures/parquet.png");
-
 		DS_Walls.init(this, &DSLObject, {
 					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 					{1, TEXTURE, 0, &TX_Walls}
 			});
+
+		M_Floor.init(this, "models/Floor.obj");
+		TX_Floor.init(this, "textures/parquet.png");
 		DS_Floor.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &TX_Floor}
 			});
 
+		M_Frame.init(this, "models/Frame.obj");
 
+		ART.init(this, "textures/ART.png");
 		DS_ART.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &ART}
 			});
+
+		manet.init(this, "textures/Manet_Dejeuner.png");
 		DS_manet.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &manet}
 			});
+
+		matisse.init(this, "textures/Matisse_theDance.png");
 		DS_matisse.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &matisse}
 			});
+
+		monet.init(this, "textures/Monet-Sunrise.png");
 		DS_monet.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &monet}
 			});
+
+		munch.init(this, "textures/Munch_Scream.png");
 		DS_munch.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &munch}
 			});
+
+		picasso.init(this, "textures/Picasso_Guernica.png");
 		DS_picasso.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &picasso}
 			});
+
+		pisarro.init(this, "textures/pisarro_boulevard_monmarte.png");
 		DS_pisarro.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &pisarro}
 			});
+
+		seurat.init(this, "textures/Seurat_a_sunday.png");
 		DS_seurat.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &seurat}
 			});
+
+		vgstar.init(this, "textures/starringNight.png");
 		DS_vgstar.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &vgstar}
 			});
+
+		vgself.init(this, "textures/VanGogh_self.png");
 		DS_vgself.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &vgself}
 			});
+
+		cezanne.init(this, "textures/theBathers_Cezanne.png");
 		DS_cezanne.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &cezanne}
 			});
+
+		volpedo.init(this, "textures/Volpedo_FourthEstate.png");
 		DS_volpedo.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &volpedo}
@@ -192,8 +199,9 @@ protected:
 
 
 		DS_Global.init(this, &DSLGlobal, {
-					{0, UNIFORM, sizeof(globalUniformBufferObject), nullptr}
+						{0, UNIFORM, sizeof(globalUniformBufferObject), nullptr},
 			});
+
 	}
 
 
@@ -321,33 +329,17 @@ protected:
 
 		//////////////////////////////////////// F R A M E S ///////////////////////////////////////////
 
-		//VkBuffer vertexBuffers_Frames[] = { M_Frame.vertexBuffer };
-		//VkDeviceSize offsets_Frames[] = { 0 };
+		VkBuffer vertexBuffers_Frames[] = { M_Frame.vertexBuffer };
+		VkDeviceSize offsets_Frames[] = { 0 };
 
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Frames, offsets_Frames);
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Frames, offsets_Frames);
 
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0,
-		//	VK_INDEX_TYPE_UINT32);
-
-
+		vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0,
+			VK_INDEX_TYPE_UINT32);
 
 
+		// A R T //
 
-
-
-
-
-
-		// ART
-		//
-
-		//VkBuffer vertexBuffers_ART[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
-		//VkDeviceSize offsets_ART[] = { 0 };
-
-		//vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_ART, offsets_ART);
-		//// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
-
-		//vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -357,215 +349,122 @@ protected:
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		//// Manet
 
-		////VkBuffer vertexBuffers_Manet[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_Manet[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Manet, offsets_Manet);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		// M A N E T //
 
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_manet.descriptorSets[currentImage],
+			0, nullptr);
 
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_manet.descriptorSets[currentImage],
-		////	0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		// M A T I S S E //
 
-		////// Matisse
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_matisse.descriptorSets[currentImage],
+			0, nullptr);
 
-		////VkBuffer vertexBuffers_Matisse[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_Matisse[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Matisse, offsets_Matisse);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		// M O N E T //
 
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
 
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_matisse.descriptorSets[currentImage],
-		////	0, nullptr);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_monet.descriptorSets[currentImage],
+			0, nullptr);
 
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////// Monet
+		// M U N C H //
 
-		////VkBuffer vertexBuffers_Monet[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
 
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_Monet[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Monet, offsets_Monet);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_munch.descriptorSets[currentImage],
+			0, nullptr);
 
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_monet.descriptorSets[currentImage],
-		////	0, nullptr);
+		// P I C A S S O //
 
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_picasso.descriptorSets[currentImage],
+			0, nullptr);
 
-		////// Munch
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////VkBuffer vertexBuffers_Munch[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		// P I S A R R O //
 
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_Munch[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Munch, offsets_Munch);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_pisarro.descriptorSets[currentImage],
+			0, nullptr);
 
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_munch.descriptorSets[currentImage],
-		////	0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		// S E U R A T //
 
-		////// Picasso 
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_seurat.descriptorSets[currentImage],
+			0, nullptr);
 
-		////VkBuffer vertexBuffers_Picasso[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_Picasso[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Picasso, offsets_Picasso);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		// V A N  G O G H   S T A R //
 
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_vgstar.descriptorSets[currentImage],
+			0, nullptr);
 
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_picasso.descriptorSets[currentImage],
-		////	0, nullptr);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		// V A N  G O G H   S E L F //
 
-		////// Pisarro
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_vgself.descriptorSets[currentImage],
+			0, nullptr);
 
-		////VkBuffer vertexBuffers_Pisarro[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_Pisarro[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Pisarro, offsets_Pisarro);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
+		// C E Z A N N E //
 
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_pisarro.descriptorSets[currentImage],
-		////	0, nullptr);
 
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_cezanne.descriptorSets[currentImage],
+			0, nullptr);
 
-		////// Seurat
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
-		////VkBuffer vertexBuffers_Seurat[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
+		// V O L P E D O //
 
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_Seurat[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Seurat, offsets_Seurat);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_volpedo.descriptorSets[currentImage],
+			0, nullptr);
 
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_seurat.descriptorSets[currentImage],
-		////	0, nullptr);
-
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
-
-		////// Van Gogh Starry Night
-
-		////VkBuffer vertexBuffers_VGStar[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
-
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_VGStar[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_VGStar, offsets_VGStar);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
-
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_vgstar.descriptorSets[currentImage],
-		////	0, nullptr);
-
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
-
-		////// Van Gogh Self Portrait
-
-		////VkBuffer vertexBuffers_VGSelf[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
-
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_VGSelf[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_VGSelf, offsets_VGSelf);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
-
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_vgself.descriptorSets[currentImage],
-		////	0, nullptr);
-
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
-
-
-		////// Cezanne
-
-		////VkBuffer vertexBuffers_Cezanne[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
-
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_Cezanne[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Cezanne, offsets_Cezanne);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
-
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_cezanne.descriptorSets[currentImage],
-		////	0, nullptr);
-
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
-
-		////// Volpedo
-
-		////VkBuffer vertexBuffers_Volpedo[] = { M_Frame.vertexBuffer }; // Vertex buffer for the frame of the paintings
-
-		////// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		////VkDeviceSize offsets_Volpedo[] = { 0 };
-		////vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Volpedo, offsets_Volpedo);
-		////// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
-
-		////vkCmdBindIndexBuffer(commandBuffer, M_Frame.indexBuffer, 0, VK_INDEX_TYPE_UINT32);
-
-		////vkCmdBindDescriptorSets(commandBuffer,
-		////	VK_PIPELINE_BIND_POINT_GRAPHICS,
-		////	P1.pipelineLayout, 1, 1, &DS_volpedo.descriptorSets[currentImage],
-		////	0, nullptr);
-
-		////vkCmdDrawIndexed(commandBuffer,
-		////	static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
 	}
 
@@ -581,70 +480,124 @@ protected:
 		float time = std::chrono::duration<float, std::chrono::seconds::period>
 			(currentTime - startTime).count();
 
+		static struct CameraAngle {
+			float x = 0.0f;
+			float y = 0.0f;
+			float z = 0.0f;
+		} CamAngle;
+
+		static struct CameraPosition {
+			float x = 0.0f;
+			float y = -0.5f;
+			float z = 0.0f;
+		} CamPos;
+
+		const float W_speed = 0.0005;
+		const float S_speed = 0.0003;
+
+		const float A_speed = 0.0002;
+		const float D_speed = 0.0002;
+
+		const float rot_speed_v = 0.009; // vertical rotation
+		const float rot_speed_h = 0.03; // horizontal rotation
+
+		static glm::vec3 Translation = glm::vec3(0.0f, 0.0f, 0.0f);
+
+		////////////////////////// C O N T R O L S //////////////////////////
+
+		if (glfwGetKey(window, GLFW_KEY_W)) {
+
+			CamPos.x -= W_speed * sin(glm::radians(CamAngle.y));
+			CamPos.z += W_speed * cos(glm::radians(CamAngle.y));
 
 
 
+		}
+		if (glfwGetKey(window, GLFW_KEY_A)) {
 
+			CamPos.z += A_speed * sin(glm::radians(CamAngle.y));
+			CamPos.x += W_speed * cos(glm::radians(CamAngle.y));
 
+		}
+		if (glfwGetKey(window, GLFW_KEY_D)) {
 
+			CamPos.z -= A_speed * sin(glm::radians(CamAngle.y));
+			CamPos.x -= W_speed * cos(glm::radians(CamAngle.y));
 
+		}
+		if (glfwGetKey(window, GLFW_KEY_S)) {
 
+			CamPos.x += S_speed * sin(glm::radians(CamAngle.y));
+			CamPos.z -= S_speed * cos(glm::radians(CamAngle.y));
 
+		}
 
+		if (glfwGetKey(window, GLFW_KEY_UP)) {
+
+			CamAngle.x -= rot_speed_v;
+		}
+		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
+
+			CamAngle.y -= rot_speed_h;
+		}
+		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
+
+			CamAngle.y += rot_speed_h;
+		}
+		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
+
+			CamAngle.x += rot_speed_v;
+		}
+
+		globalUniformBufferObject gubo{};
+		UniformBufferObject ubo{};
 
 		void* data;
 
-		// ubo.model = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
-
-		gubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f),
-			glm::vec3(0.0f, 0.0f, 0.0f),
-			glm::vec3(0.0f, 1.0f, 0.0f));
+		gubo.view = glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.x), glm::vec3(1, 0, 0)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.y), glm::vec3(0, 1, 0)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.z), glm::vec3(0, 0, 1)) *
+			glm::translate(glm::mat4(1), glm::vec3(CamPos.x, CamPos.y, CamPos.z));
 
 
 		gubo.proj = glm::perspective(glm::radians(45.0f),
-			swapChainExtent.width / (float)swapChainExtent.height,
-			0.1f, 10.0f);
-
+			swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
 
 		gubo.proj[1][1] *= -1;
 
-
-
-		// Here is where you actually update your uniforms
+		// GLOBAL DESCRIPTOR SET
 		vkMapMemory(device, DS_Global.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(gubo), 0, &data);
-		memcpy(data, &ubo, sizeof(gubo));
+		memcpy(data, &gubo, sizeof(gubo));
 		vkUnmapMemory(device, DS_Global.uniformBuffersMemory[0][currentImage]);
 
+		// Placing Floor
 
+		ubo.model = glm::mat4(1.0f);
 
+		vkMapMemory(device, DS_Floor.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Floor.uniformBuffersMemory[0][currentImage]);
 
+		// Placing Walls
 
+		ubo.model = glm::mat4(1.0f);
 
+		vkMapMemory(device, DS_Walls.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Walls.uniformBuffersMemory[0][currentImage]);
 
+		// ART
 
+		ubo.model = glm::mat4(1.0f);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		vkMapMemory(device, DS_ART.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_ART.uniformBuffersMemory[0][currentImage]);
 
 	}
 };
