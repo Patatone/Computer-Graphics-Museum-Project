@@ -19,6 +19,7 @@ struct UniformBufferObject {
 
 */
 
+// Define the uniform block that will be passed to the shaders
 struct globalUniformBufferObject {
 
 	alignas(16) glm::mat4 view;
@@ -40,21 +41,25 @@ protected:
 	DescriptorSetLayout DSLGlobal;
 	DescriptorSetLayout DSLObject;
 
-	// Pipelines [Shader couples]
+	// We create the Pipelines [Shader couples]
+	// It loads the shaders, define the vertex form (in this case it's fixed)
+	// and tells which parameters are passed to the vertex and fragment shadres
 	Pipeline P1;
 
 	///////////////////// M O D E L S //////////////////////////////////////
-
+	// Everthing connected with models, so vertex buffer, the index buffer
+	// vulkan memory and vulkan buffer when they are transfered
 	Model M_Walls, M_Floor, M_Frame;
 
 	//////////////////// T E X T U R E S ///////////////////////////////////
-
+	// Everthing required for textures, the sampler, the pointer to the text image, 
+	// to the memory allocated for the texture 
 	Texture ART, manet, matisse, monet, munch, picasso, pisarro, seurat, vgstar, vgself, cezanne, volpedo;
 	Texture TX_Walls, TX_Floor;
 
 	////////////////// D E S C R I P T O R   S E T S ///////////////////////
-
-
+	// Instance of the Descriptor Layouts, elements that will be passed
+	// to the shaders when drawing an object
 	DescriptorSet DS_ART, DS_manet, DS_matisse, DS_monet, DS_munch, DS_picasso, DS_pisarro, DS_seurat, DS_vgstar, DS_vgself, DS_cezanne, DS_volpedo;
 	DescriptorSet DS_Walls, DS_Floor;
 
@@ -109,20 +114,20 @@ protected:
 
 
 		ART.init(this, "textures/ART.png");
-		manet.init(this, "textures/Manet_Dejeuner.jpg");
-		matisse.init(this, "textures/Matisse_theDance.jpg");
-		monet.init(this, "textures/Monet-Sunrise.jpg");
-		munch.init(this, "textures/Munch_Scream.jpg");
-		picasso.init(this, "textures/Picasso_Guernica.jpg");
-		pisarro.init(this, "textures/pisarro_boulevard_monmarte.jpg");
+		manet.init(this, "textures/Manet_Dejeuner.png");
+		matisse.init(this, "textures/Matisse_theDance.png");
+		monet.init(this, "textures/Monet-Sunrise.png");
+		munch.init(this, "textures/Munch_Scream.png");
+		picasso.init(this, "textures/Picasso_Guernica.png");
+		pisarro.init(this, "textures/pisarro_boulevard_monmarte.png");
 		seurat.init(this, "textures/Seurat_a_sunday.png");
-		vgstar.init(this, "textures/starringNight.jpg");
-		vgself.init(this, "textures/VanGogh_self.jpg");
-		cezanne.init(this, "textures/theBathers_Cezanne.jpg");
-		volpedo.init(this, "textures/Volpedo_FourthEstate.jpg");
+		vgstar.init(this, "textures/starringNight.png");
+		vgself.init(this, "textures/VanGogh_self.png");
+		cezanne.init(this, "textures/theBathers_Cezanne.png");
+		volpedo.init(this, "textures/Volpedo_FourthEstate.png");
 
-		TX_Walls.init(this, "textures/wall.jpg");
-		TX_Floor.init(this, "textures/parquet.jpg");
+		TX_Walls.init(this, "textures/wall.png");
+		TX_Floor.init(this, "textures/parquet.png");
 
 		DS_Walls.init(this, &DSLObject, {
 					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
