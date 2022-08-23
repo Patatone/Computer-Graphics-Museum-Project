@@ -67,8 +67,8 @@ protected:
 	// Here you set the main application parameters
 	void setWindowParameters() {
 		// window size, titile and initial background
-		windowWidth = 800;
-		windowHeight = 600;
+		windowWidth = 1800;
+		windowHeight = 1000;
 		windowTitle = "The Computer Graphics Museum";
 		initialBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
 
@@ -81,10 +81,6 @@ protected:
 	// Here you load and setup all your Vulkan objects
 	void localInit() {
 		// Descriptor Layouts [what will be passed to the shaders]
-
-
-
-
 
 		DSLObject.init(this, {
 			// this array contains the binding:
@@ -100,9 +96,6 @@ protected:
 			});
 
 
-
-
-
 		// Pipelines [Shader couples]
 		// The last array, is a vector of pointer to the layouts of the sets that will
 		// be used in this pipeline. The first element will be set 0, and so on..
@@ -116,20 +109,20 @@ protected:
 
 
 		ART.init(this, "textures/ART.png");
-		manet.init(this, "textures/Manet_Dejeuner.png");
-		matisse.init(this, "textures/Matisse_theDance.png");
-		monet.init(this, "textures/Monet-Sunrise.png");
-		munch.init(this, "textures/Munch_Scream.png");
-		picasso.init(this, "textures/Picasso_Guernica.png");
-		pisarro.init(this, "textures/pisarro_boulevard_monmarte.png");
+		manet.init(this, "textures/Manet_Dejeuner.jpg");
+		matisse.init(this, "textures/Matisse_theDance.jpg");
+		monet.init(this, "textures/Monet-Sunrise.jpg");
+		munch.init(this, "textures/Munch_Scream.jpg");
+		picasso.init(this, "textures/Picasso_Guernica.jpg");
+		pisarro.init(this, "textures/pisarro_boulevard_monmarte.jpg");
 		seurat.init(this, "textures/Seurat_a_sunday.png");
-		vgstar.init(this, "textures/starringNight.png");
-		vgself.init(this, "textures/VanGogh_self.png");
-		cezanne.init(this, "textures/theBathers_Cezanne.png");
-		volpedo.init(this, "textures/Volpedo_FourthEstate.png");
+		vgstar.init(this, "textures/starringNight.jpg");
+		vgself.init(this, "textures/VanGogh_self.jpg");
+		cezanne.init(this, "textures/theBathers_Cezanne.jpg");
+		volpedo.init(this, "textures/Volpedo_FourthEstate.jpg");
 
-		TX_Walls.init(this, "textures/wall.png");
-		TX_Floor.init(this, "textures/parquet.png");
+		TX_Walls.init(this, "textures/wall.jpg");
+		TX_Floor.init(this, "textures/parquet.jpg");
 
 		DS_Walls.init(this, &DSLObject, {
 					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
