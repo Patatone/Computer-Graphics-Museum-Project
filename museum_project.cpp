@@ -85,8 +85,8 @@ protected:
 
 	// Here you load and setup all your Vulkan objects
 	void localInit() {
-		// Descriptor Layouts [what will be passed to the shaders]
-
+		// Initialize the Descriptor Layouts [what will be passed to the shaders]
+		// We have to specify how many bindings we have to use
 		DSLObject.init(this, {
 			// this array contains the binding:
 			// first  element : the binding number
@@ -101,13 +101,14 @@ protected:
 			});
 
 
-		// Pipelines [Shader couples]
-		// The last array, is a vector of pointer to the layouts of the sets that will
+		// Initialize the Pipelines [Shader couples]
+		// The last array, is a vector of pointer to the Descriptor Set layouts that will
 		// be used in this pipeline. The first element will be set 0, and so on..
 		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", { &DSLObject, &DSLGlobal });
 
 
-		// Models, textures and Descriptors (values assigned to the uniforms)
+		// Initialize the Models, textures and Descriptors (values assigned to the uniforms)
+		//".obj" files contains: vertex position, normal vector direction and UV coordinates
 		M_Frame.init(this, "models/Frame_sq.obj");
 		M_Walls.init(this, "models/Walls.obj");
 		M_Floor.init(this, "models/Floor.obj");
@@ -129,7 +130,15 @@ protected:
 		TX_Walls.init(this, "textures/wall.png");
 		TX_Floor.init(this, "textures/parquet.png");
 
+		// The real Descriptor Set, it assigns values to the uniforms
+		// application side that will be passed to the shaders
 		DS_Walls.init(this, &DSLObject, {
+		// the second parameter, is a pointer to the Uniform Set Layout of this set
+		// the last parameter is an array, with one element per binding of the set.
+		// first  elmenet : the binding number
+		// second element : UNIFORM or TEXTURE (an enum) depending on the type
+		// third  element : only for UNIFORMs, the size of the corresponding C++ object
+		// fourth element : only for TEXTUREs, the pointer to the corresponding texture object
 					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 					{1, TEXTURE, 0, &TX_Walls}
 			});
@@ -193,9 +202,6 @@ protected:
 					{0, UNIFORM, sizeof(globalUniformBufferObject), nullptr}
 			});
 	}
-
-
-
 
 
 
@@ -278,6 +284,10 @@ protected:
 
 		// property .pipelineLayout of a pipeline contains its layout.
 		// property .descriptorSets of a descriptor set contains its elements.
+		// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
+
+		// Draw commands for the walls
 
 		VkBuffer vertexBuffers_Walls[] = { M_Walls.vertexBuffer };
 		VkDeviceSize offsets_Walls[] = { 0 };
@@ -298,6 +308,7 @@ protected:
 
 
 		//////////////////////////////////////// F L O O R ///////////////////////////////////////////
+		// Draw commands for the floor
 
 		VkBuffer vertexBuffers_Floor[] = { M_Floor.vertexBuffer };
 		VkDeviceSize offsets_Floor[] = { 0 };
@@ -573,6 +584,7 @@ protected:
 
 	// Here is where you update the uniforms.
 	// Very likely this will be where you will be writing the logic of your application.
+	// Here we put all the code that interacts with the user
 	void updateUniformBuffer(uint32_t currentImage) {
 		static auto startTime = std::chrono::high_resolution_clock::now();
 		auto currentTime = std::chrono::high_resolution_clock::now();
