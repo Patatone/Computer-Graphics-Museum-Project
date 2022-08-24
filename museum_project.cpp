@@ -1,6 +1,6 @@
 // This has been adapted from the Vulkan tutorial
 
-#include "MyProject.hpp"
+#include "museum_project.hpp"
 
 /*
 
