@@ -1,6 +1,6 @@
 // This has been adapted from the Vulkan tutorial
 
-#include "MyProject.hpp"
+#include "museum_project.hpp"
 
 /*
 
@@ -19,6 +19,7 @@ struct UniformBufferObject {
 
 */
 
+// Define the uniform block that will be passed to the shaders
 struct globalUniformBufferObject {
 
 	alignas(16) glm::mat4 view;
@@ -33,28 +34,33 @@ struct UniformBufferObject {
 
 // MAIN ! 
 class MyProject : public BaseProject {
-	protected:
+protected:
 	// Here you list all the Vulkan objects you need:
-	
+
 	// Descriptor Layouts [what will be passed to the shaders]
 	DescriptorSetLayout DSLGlobal;
 	DescriptorSetLayout DSLObject;
 
-	// Pipelines [Shader couples]
+	// We create the Pipelines [Shader couples]
+	// It loads the shaders, define the vertex form (in this case it's fixed)
+	// and tells which parameters are passed to the vertex and fragment shadres
 	Pipeline P1;
 
 	///////////////////// M O D E L S //////////////////////////////////////
-
+	// Everthing connected with models, so vertex buffer, the index buffer
+	// vulkan memory and vulkan buffer when they are transfered
 	Model M_Walls, M_Floor, M_Frame;
 
 	//////////////////// T E X T U R E S ///////////////////////////////////
-
+	// Everthing required for textures, the sampler, the pointer to the text image, 
+	// to the memory allocated for the texture 
 	Texture ART, manet, matisse, monet, munch, picasso, pisarro, seurat, vgstar, vgself, cezanne, volpedo;
 	Texture ART_card, manet_card, matisse_card, monet_card, munch_card, picasso_card, pisarro_card, seurat_card, vgstar_card, vgself_card, cezanne_card, volpedo_card;
 	Texture TX_Walls, TX_Floor;
 
 	////////////////// D E S C R I P T O R   S E T S ///////////////////////
-
+	// Instance of the Descriptor Layouts, elements that will be passed
+	// to the shaders when drawing an object
 
 	DescriptorSet DS_ART, DS_manet, DS_matisse, DS_monet, DS_munch, DS_picasso, DS_pisarro, DS_seurat, DS_vgstar, DS_vgself, DS_cezanne, DS_volpedo;
 	DescriptorSet DS_ART_card, DS_manet_card, DS_matisse_card, DS_monet_card, DS_munch_card, DS_picasso_card, DS_pisarro_card, DS_seurat_card, DS_vgstar_card, DS_vgself_card, DS_cezanne_card, DS_volpedo_card;
@@ -63,24 +69,25 @@ class MyProject : public BaseProject {
 	DescriptorSet DS_Global;
 
 
-	
+
 	// Here you set the main application parameters
 	void setWindowParameters() {
 		// window size, titile and initial background
 		windowWidth = 1600;
 		windowHeight = 900;
 		windowTitle = "The Computer Graphics Museum";
-		initialBackgroundColor = {1.0f, 1.0f, 1.0f, 1.0f};
-		
+		initialBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
+
 		// Descriptor pool sizes
 		uniformBlocksInPool = 27;
 		texturesInPool = 26;
 		setsInPool = 27;
 	}
-	
+
 	// Here you load and setup all your Vulkan objects
 	void localInit() {
-		// Descriptor Layouts [what will be passed to the shaders]
+		// Initialize the Descriptor Layouts [what will be passed to the shaders]
+		// We have to specify how many bindings we have to use
 
 		DSLObject.init(this, {
 			// this array contains the binding:
@@ -91,39 +98,49 @@ class MyProject : public BaseProject {
 			{1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT}
 			});
 
-		DSLGlobal.init(this, { 
-			{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS}, 
+		DSLGlobal.init(this, {
+			{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS},
 			});
 
 
 
 
 
-		// Pipelines [Shader couples]
-		// The last array, is a vector of pointer to the layouts of the sets that will
+		// Initialize the Pipelines [Shader couples]
+		// The last array, is a vector of pointer to Descriptor Set layouts that will
 		// be used in this pipeline. The first element will be set 0, and so on..
-		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", {&DSLGlobal, &DSLObject});
+		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", { &DSLGlobal, &DSLObject });
 
 
 		// Models, textures and Descriptors (values assigned to the uniforms)
-		
+		// Initialize the Models, textures and Descriptors (values assigned to the uniforms)
+		//".obj" files contains: vertex position, normal vector direction and UV coordinates
+
 		// W A L L S //
 
 		M_Walls.init(this, "models/Walls.obj");
 		TX_Walls.init(this, "textures/wall.png");
+		// The real Descriptor Set, it assigns values to the uniforms
+		// application side that will be passed to the shaders
 		DS_Walls.init(this, &DSLObject, {
+			// the second parameter, is a pointer to the Uniform Set Layout of this set
+			// the last parameter is an array, with one element per binding of the set.
+			// first  elmenet : the binding number
+			// second element : UNIFORM or TEXTURE (an enum) depending on the type
+			// third  element : only for UNIFORMs, the size of the corresponding C++ object
+			// fourth element : only for TEXTUREs, the pointer to the corresponding texture object
 					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 					{1, TEXTURE, 0, &TX_Walls}
-				});
+			});
 
 		// F L O O R //
 
-		M_Floor .init(this, "models/Floor.obj");
+		M_Floor.init(this, "models/Floor.obj");
 		TX_Floor.init(this, "textures/parquet.png");
 		DS_Floor.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &TX_Floor}
-			}); 
+			});
 
 		////////////////////////////////////// F R A M E S //////////////////////////////////////
 
@@ -258,7 +275,7 @@ class MyProject : public BaseProject {
 
 		// V A N  G O G H  S E L F //
 
-		vgself.init(this, "textures/VanGogh_self.png");	
+		vgself.init(this, "textures/VanGogh_self.png");
 		DS_vgself.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &vgself}
@@ -301,10 +318,10 @@ class MyProject : public BaseProject {
 		// G L O B A L //
 
 
-		DS_Global.init(this, &DSLGlobal, { 
-						{0, UNIFORM, sizeof(globalUniformBufferObject), nullptr}, 
+		DS_Global.init(this, &DSLGlobal, {
+						{0, UNIFORM, sizeof(globalUniformBufferObject), nullptr},
 			});
-		
+
 	}
 
 
@@ -312,7 +329,7 @@ class MyProject : public BaseProject {
 	void localCleanup() {
 
 		DS_ART.cleanup();
-		DS_cezanne.cleanup();	
+		DS_cezanne.cleanup();
 		DS_manet.cleanup();
 		DS_matisse.cleanup();
 		DS_monet.cleanup();
@@ -366,8 +383,8 @@ class MyProject : public BaseProject {
 		seurat_card.cleanup();
 		vgself_card.cleanup();
 		vgstar_card.cleanup();
-		volpedo_card.cleanup();		
-		
+		volpedo_card.cleanup();
+
 		TX_Walls.cleanup();
 		TX_Floor.cleanup();
 
@@ -384,17 +401,17 @@ class MyProject : public BaseProject {
 
 
 
-	
-	
 
-	
+
+
+
 	// Here it is the creation of the command buffer:
 	// You send to the GPU all the objects you want to draw,
 	// with their buffers and textures
 	void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
 
 
-				
+
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, P1.graphicsPipeline);
 
 		vkCmdBindDescriptorSets(commandBuffer,
@@ -403,15 +420,18 @@ class MyProject : public BaseProject {
 			0, nullptr);
 
 
-		
+
 
 		//////////////////////////////////// W A L L S ///////////////////////////////////////////
 
 		// property .pipelineLayout of a pipeline contains its layout.
 		// property .descriptorSets of a descriptor set contains its elements.
+		// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+		// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 
+		// Draw commands for the walls
 		VkBuffer vertexBuffers_Walls[] = { M_Walls.vertexBuffer };
-		VkDeviceSize offsets_Walls[] = {0};
+		VkDeviceSize offsets_Walls[] = { 0 };
 
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Walls, offsets_Walls);
 
@@ -422,13 +442,14 @@ class MyProject : public BaseProject {
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_Walls.descriptorSets[currentImage],
 			0, nullptr);
-						
+
 		// property .indices.size() of models, contains the number of triangles * 3 of the mesh.
 		vkCmdDrawIndexed(commandBuffer,
-					static_cast<uint32_t>(M_Walls.indices.size()), 1, 0, 0, 0);
+			static_cast<uint32_t>(M_Walls.indices.size()), 1, 0, 0, 0);
 
-		
+
 		//////////////////////////////////////// F L O O R ///////////////////////////////////////////
+		// Draw commands for the floor
 
 		VkBuffer vertexBuffers_Floor[] = { M_Floor.vertexBuffer };
 		VkDeviceSize offsets_Floor[] = { 0 };
@@ -506,7 +527,7 @@ class MyProject : public BaseProject {
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
-		
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_matisse_card.descriptorSets[currentImage],
@@ -688,14 +709,15 @@ class MyProject : public BaseProject {
 
 	// Here is where you update the uniforms.
 	// Very likely this will be where you will be writing the logic of your application.
+	// Here we put all the code that interacts with the user
 	void updateUniformBuffer(uint32_t currentImage) {
 		static auto startTime = std::chrono::high_resolution_clock::now();
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>
-					(currentTime - startTime).count();
+			(currentTime - startTime).count();
 
 		static struct CameraAngle {
-		    float x = 0.0f;
+			float x = 0.0f;
 			float y = 0.0f;
 			float z = 0.0f;
 		} CamAngle;
@@ -722,69 +744,64 @@ class MyProject : public BaseProject {
 		////////////////////////// C O N T R O L S //////////////////////////
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
-		
 			CamPos.x -= W_speed * sin(glm::radians(CamAngle.y));
 			CamPos.z += W_speed * cos(glm::radians(CamAngle.y));
-			
-			
-
 		}
 		if (glfwGetKey(window, GLFW_KEY_A)) {
-
 			CamPos.z += A_speed * sin(glm::radians(CamAngle.y));
 			CamPos.x += W_speed * cos(glm::radians(CamAngle.y));
-		
 		}
 		if (glfwGetKey(window, GLFW_KEY_D)) {
-
 			CamPos.z -= A_speed * sin(glm::radians(CamAngle.y));
 			CamPos.x -= W_speed * cos(glm::radians(CamAngle.y));
-	
 		}
 		if (glfwGetKey(window, GLFW_KEY_S)) {
-
 			CamPos.x += S_speed * sin(glm::radians(CamAngle.y));
 			CamPos.z -= S_speed * cos(glm::radians(CamAngle.y));
-
 		}
-
 		if (glfwGetKey(window, GLFW_KEY_UP)) {
-
 			CamAngle.x -= rot_speed_v;
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
-
 			CamAngle.y -= rot_speed_h;
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
-
 			CamAngle.y += rot_speed_h;
 		}
 		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
-
 			CamAngle.x += rot_speed_v;
+		}
+
+		static bool show_cards = false; 
+		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+			if (show_cards) {
+				show_cards = false;
+			} else {
+				show_cards = true;
+			}
 		}
 
 		globalUniformBufferObject gubo{};
 		UniformBufferObject ubo{};
 
-		void* data;		
+		void* data;
 
 
 		gubo.view = glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.x), glm::vec3(1, 0, 0)) *
-					glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.y), glm::vec3(0, 1, 0)) *
-					glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.z), glm::vec3(0, 0, 1)) *
-					glm::translate(glm::mat4(1), glm::vec3(CamPos.x, CamPos.y, CamPos.z));
+			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.y), glm::vec3(0, 1, 0)) *
+			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.z), glm::vec3(0, 0, 1)) *
+			glm::translate(glm::mat4(1), glm::vec3(CamPos.x, CamPos.y, CamPos.z));
 
 
 		gubo.proj = glm::perspective(glm::radians(45.0f),
-					swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+			swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
 
 		gubo.proj[1][1] *= -1;
 
+		// Here is where you actually update your uniforms
 		// GLOBAL DESCRIPTOR SET
 		vkMapMemory(device, DS_Global.uniformBuffersMemory[0][currentImage], 0,
-							sizeof(gubo), 0, &data);
+			sizeof(gubo), 0, &data);
 		memcpy(data, &gubo, sizeof(gubo));
 		vkUnmapMemory(device, DS_Global.uniformBuffersMemory[0][currentImage]);
 
@@ -810,8 +827,6 @@ class MyProject : public BaseProject {
 
 		// A R T //
 
-
-		
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 1.0f, 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
@@ -838,8 +853,8 @@ class MyProject : public BaseProject {
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_manet.uniformBuffersMemory[0][currentImage]);
-		
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.35f,- 1.99f));
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.35f, -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_manet_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1037,7 +1052,7 @@ class MyProject : public BaseProject {
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_volpedo_card.uniformBuffersMemory[0][currentImage]);
 
-	}	
+	}
 };
 
 
@@ -1048,14 +1063,15 @@ class MyProject : public BaseProject {
 
 // This is the main: probably you do not need to touch this!
 int main() {
-    MyProject app;
+	MyProject app;
 
-    try {
-        app.run();
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        return EXIT_FAILURE;
-    }
+	try {
+		app.run();
+	}
+	catch (const std::exception& e) {
+		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
+	}
 
-    return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }
