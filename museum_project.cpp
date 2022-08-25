@@ -1,38 +1,16 @@
-// This has been adapted from the Vulkan tutorial
-
 #include "museum_project.hpp"
-
-/*
-
-
-const std::string MODEL_PATH = "models/museumTri.obj";
-const std::string TEXTURE_PATH = "textures/viking_room.png";
-
-
-
-// The uniform buffer object used in this example
-struct UniformBufferObject {
-	alignas(16) glm::mat4 model; // alignas because instead of the RAM  we want to use the VRAM for passing down these values to the shader
-	alignas(16) glm::mat4 view;
-	alignas(16) glm::mat4 proj;
-};
-
-*/
 
 // Define the uniform block that will be passed to the shaders
 struct globalUniformBufferObject {
-
 	alignas(16) glm::mat4 view;
 	alignas(16) glm::mat4 proj;
 } gubo;
 
 struct UniformBufferObject {
-
 	alignas(16) glm::mat4 model;
 } ubo;
 
 
-// MAIN ! 
 class MyProject : public BaseProject {
 protected:
 	// Here you list all the Vulkan objects you need:
@@ -69,7 +47,6 @@ protected:
 	DescriptorSet DS_Global;
 
 
-
 	// Here you set the main application parameters
 	void setWindowParameters() {
 		// window size, titile and initial background
@@ -104,17 +81,14 @@ protected:
 
 
 
-
-
 		// Initialize the Pipelines [Shader couples]
 		// The last array, is a vector of pointer to Descriptor Set layouts that will
 		// be used in this pipeline. The first element will be set 0, and so on..
 		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", { &DSLGlobal, &DSLObject });
 
 
-		// Models, textures and Descriptors (values assigned to the uniforms)
 		// Initialize the Models, textures and Descriptors (values assigned to the uniforms)
-		//".obj" files contains: vertex position, normal vector direction and UV coordinates
+		// ".obj" files contains: vertex position, normal vector direction and UV coordinates
 
 		// W A L L S //
 
@@ -317,7 +291,6 @@ protected:
 
 		// G L O B A L //
 
-
 		DS_Global.init(this, &DSLGlobal, {
 						{0, UNIFORM, sizeof(globalUniformBufferObject), nullptr},
 			});
@@ -401,16 +374,10 @@ protected:
 
 
 
-
-
-
-
 	// Here it is the creation of the command buffer:
 	// You send to the GPU all the objects you want to draw,
 	// with their buffers and textures
 	void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
-
-
 
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, P1.graphicsPipeline);
 
@@ -420,24 +387,21 @@ protected:
 			0, nullptr);
 
 
-
-
 		//////////////////////////////////// W A L L S ///////////////////////////////////////////
-
-		// property .pipelineLayout of a pipeline contains its layout.
-		// property .descriptorSets of a descriptor set contains its elements.
-		// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
-		// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
-
 		// Draw commands for the walls
+		
+		// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
 		VkBuffer vertexBuffers_Walls[] = { M_Walls.vertexBuffer };
 		VkDeviceSize offsets_Walls[] = { 0 };
 
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Walls, offsets_Walls);
 
+		// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 		vkCmdBindIndexBuffer(commandBuffer, M_Walls.indexBuffer, 0,
 			VK_INDEX_TYPE_UINT32);
 
+		// property .descriptorSets of a descriptor set contains its elements.
+		// property .pipelineLayout of a pipeline contains its layout.
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_Walls.descriptorSets[currentImage],
@@ -464,7 +428,6 @@ protected:
 			P1.pipelineLayout, 1, 1, &DS_Floor.descriptorSets[currentImage],
 			0, nullptr);
 
-		// property .indices.size() of models, contains the number of triangles * 3 of the mesh.
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Floor.indices.size()), 1, 0, 0, 0);
 
@@ -728,14 +691,14 @@ protected:
 			float z = 1.0f;
 		} CamPos;
 
-		const float W_speed = 0.001;
-		const float S_speed = 0.0006;
+		const float W_speed = 0.01;
+		const float S_speed = 0.006;
 
-		const float A_speed = 0.0004;
-		const float D_speed = 0.0004;
+		const float A_speed = 0.004;
+		const float D_speed = 0.004;
 
-		const float rot_speed_v = 0.02; // vertical rotation
-		const float rot_speed_h = 0.06; // horizontal rotation
+		const float rot_speed_v = 0.2*2; // vertical rotation
+		const float rot_speed_h = 0.6*2; // horizontal rotation
 
 		glm::mat4 one_mat = glm::mat4(1.0f);
 
@@ -837,7 +800,11 @@ protected:
 
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.35f, 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
-
+		if (show_cards) {
+			ubo.model = glm::scale(ubo.model, glm::vec3(1.0f));
+		} else {
+			ubo.model = glm::scale(ubo.model, glm::vec3(0.0f));
+		}
 		vkMapMemory(device, DS_ART_card.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
