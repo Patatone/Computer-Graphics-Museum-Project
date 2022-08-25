@@ -1,70 +1,72 @@
-#include "museum_project.hpp"
 
-// Define the uniform block that will be passed to the shaders
+#include "MyProject.hpp"
+
 struct globalUniformBufferObject {
+
 	alignas(16) glm::mat4 view;
 	alignas(16) glm::mat4 proj;
 } gubo;
 
 struct UniformBufferObject {
+
 	alignas(16) glm::mat4 model;
 } ubo;
 
 
+// MAIN ! 
 class MyProject : public BaseProject {
-protected:
+	protected:
 	// Here you list all the Vulkan objects you need:
-
+	
 	// Descriptor Layouts [what will be passed to the shaders]
 	DescriptorSetLayout DSLGlobal;
 	DescriptorSetLayout DSLObject;
 
-	// We create the Pipelines [Shader couples]
-	// It loads the shaders, define the vertex form (in this case it's fixed)
-	// and tells which parameters are passed to the vertex and fragment shadres
+	// Pipelines [Shader couples]
 	Pipeline P1;
 
 	///////////////////// M O D E L S //////////////////////////////////////
-	// Everthing connected with models, so vertex buffer, the index buffer
-	// vulkan memory and vulkan buffer when they are transfered
-	Model M_Walls, M_Floor, M_Frame;
+
+	Model M_Walls, M_Floor, M_Frame, M_Amogus, M_Suzanne;
 
 	//////////////////// T E X T U R E S ///////////////////////////////////
-	// Everthing required for textures, the sampler, the pointer to the text image, 
-	// to the memory allocated for the texture 
+
 	Texture ART, manet, matisse, monet, munch, picasso, pisarro, seurat, vgstar, vgself, cezanne, volpedo;
 	Texture ART_card, manet_card, matisse_card, monet_card, munch_card, picasso_card, pisarro_card, seurat_card, vgstar_card, vgself_card, cezanne_card, volpedo_card;
+	Texture TX_Amogus, TX_Suzanne;
+	Texture TX_Amogus_card, TX_Suzanne_card;
 	Texture TX_Walls, TX_Floor;
 
 	////////////////// D E S C R I P T O R   S E T S ///////////////////////
-	// Instance of the Descriptor Layouts, elements that will be passed
-	// to the shaders when drawing an object
+
 
 	DescriptorSet DS_ART, DS_manet, DS_matisse, DS_monet, DS_munch, DS_picasso, DS_pisarro, DS_seurat, DS_vgstar, DS_vgself, DS_cezanne, DS_volpedo;
 	DescriptorSet DS_ART_card, DS_manet_card, DS_matisse_card, DS_monet_card, DS_munch_card, DS_picasso_card, DS_pisarro_card, DS_seurat_card, DS_vgstar_card, DS_vgself_card, DS_cezanne_card, DS_volpedo_card;
+	DescriptorSet DS_Amogus, DS_Suzanne;
+	DescriptorSet DS_Amogus_card, DS_Suzanne_card;
 	DescriptorSet DS_Walls, DS_Floor;
 
 	DescriptorSet DS_Global;
 
 
+	
 	// Here you set the main application parameters
 	void setWindowParameters() {
 		// window size, titile and initial background
 		windowWidth = 1600;
 		windowHeight = 900;
 		windowTitle = "The Computer Graphics Museum";
-		initialBackgroundColor = { 1.0f, 1.0f, 1.0f, 1.0f };
-
+		initialBackgroundColor = {1.0f, 1.0f, 1.0f, 1.0f};
+		
 		// Descriptor pool sizes
-		uniformBlocksInPool = 27;
-		texturesInPool = 26;
-		setsInPool = 27;
+		uniformBlocksInPool = 31;
+		texturesInPool = 30;
+		setsInPool = 31;
 	}
-
+	
 	// Here you load and setup all your Vulkan objects
 	void localInit() {
-		// Initialize the Descriptor Layouts [what will be passed to the shaders]
-		// We have to specify how many bindings we have to use
+		// Descriptor Layouts [what will be passed to the shaders]
 
 		DSLObject.init(this, {
 			// this array contains the binding:
@@ -75,46 +77,39 @@ protected:
 			{1, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, VK_SHADER_STAGE_FRAGMENT_BIT}
 			});
 
-		DSLGlobal.init(this, {
-			{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS},
+		DSLGlobal.init(this, { 
+			{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS}, 
 			});
 
 
 
-		// Initialize the Pipelines [Shader couples]
-		// The last array, is a vector of pointer to Descriptor Set layouts that will
+
+
+		// Pipelines [Shader couples]
+		// The last array, is a vector of pointer to the layouts of the sets that will
 		// be used in this pipeline. The first element will be set 0, and so on..
-		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", { &DSLGlobal, &DSLObject });
+		P1.init(this, "shaders/vert.spv", "shaders/frag.spv", {&DSLGlobal, &DSLObject});
 
 
-		// Initialize the Models, textures and Descriptors (values assigned to the uniforms)
-		// ".obj" files contains: vertex position, normal vector direction and UV coordinates
-
+		// Models, textures and Descriptors (values assigned to the uniforms)
+		
 		// W A L L S //
 
 		M_Walls.init(this, "models/Walls.obj");
 		TX_Walls.init(this, "textures/wall.png");
-		// The real Descriptor Set, it assigns values to the uniforms
-		// application side that will be passed to the shaders
 		DS_Walls.init(this, &DSLObject, {
-			// the second parameter, is a pointer to the Uniform Set Layout of this set
-			// the last parameter is an array, with one element per binding of the set.
-			// first  elmenet : the binding number
-			// second element : UNIFORM or TEXTURE (an enum) depending on the type
-			// third  element : only for UNIFORMs, the size of the corresponding C++ object
-			// fourth element : only for TEXTUREs, the pointer to the corresponding texture object
 					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 					{1, TEXTURE, 0, &TX_Walls}
-			});
+				});
 
 		// F L O O R //
 
-		M_Floor.init(this, "models/Floor.obj");
+		M_Floor .init(this, "models/Floor.obj");
 		TX_Floor.init(this, "textures/parquet.png");
 		DS_Floor.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &TX_Floor}
-			});
+			}); 
 
 		////////////////////////////////////// F R A M E S //////////////////////////////////////
 
@@ -249,7 +244,7 @@ protected:
 
 		// V A N  G O G H  S E L F //
 
-		vgself.init(this, "textures/VanGogh_self.png");
+		vgself.init(this, "textures/VanGogh_self.png");	
 		DS_vgself.init(this, &DSLObject, {
 						{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
 						{1, TEXTURE, 0, &vgself}
@@ -289,12 +284,57 @@ protected:
 						{1, TEXTURE, 0, &volpedo_card}
 			});
 
-		// G L O B A L //
+		////////////////////////////////////// S T A T U E S //////////////////////////////////////
 
-		DS_Global.init(this, &DSLGlobal, {
-						{0, UNIFORM, sizeof(globalUniformBufferObject), nullptr},
+
+		// A M O N G  U S //
+
+		// Statue
+
+		M_Amogus.init(this, "models/Amogus.obj");
+		TX_Amogus.init(this, "textures/marble.png");
+		DS_Amogus.init(this, &DSLObject, {
+					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+					{1, TEXTURE, 0, &TX_Amogus}
 			});
 
+		// Card
+
+		M_Frame.init(this, "models/Rectangle.obj");
+		TX_Amogus_card.init(this, "textures/Amogus_card.PNG");
+		DS_Amogus_card.init(this, &DSLObject, {
+					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+					{1, TEXTURE, 0, &TX_Amogus_card}
+			});
+
+		// S U Z A N N E //
+
+		// Statue
+
+		M_Suzanne.init(this, "models/Suzanne.obj");
+		TX_Suzanne.init(this, "textures/Suzanne_texture.png");
+		DS_Suzanne.init(this, &DSLObject, {
+					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+					{1, TEXTURE, 0, &TX_Suzanne}
+			});
+
+		// Card
+
+		M_Frame.init(this, "models/Rectangle.obj");
+		TX_Suzanne_card.init(this, "textures/Suzanne_card.PNG");
+		DS_Suzanne_card.init(this, &DSLObject, {
+					{0, UNIFORM, sizeof(UniformBufferObject), nullptr},
+					{1, TEXTURE, 0, &TX_Suzanne_card}
+			});
+
+
+		// G L O B A L //
+
+
+		DS_Global.init(this, &DSLGlobal, { 
+						{0, UNIFORM, sizeof(globalUniformBufferObject), nullptr}, 
+			});
+		
 	}
 
 
@@ -302,7 +342,7 @@ protected:
 	void localCleanup() {
 
 		DS_ART.cleanup();
-		DS_cezanne.cleanup();
+		DS_cezanne.cleanup();	
 		DS_manet.cleanup();
 		DS_matisse.cleanup();
 		DS_monet.cleanup();
@@ -313,6 +353,12 @@ protected:
 		DS_vgself.cleanup();
 		DS_vgstar.cleanup();
 		DS_volpedo.cleanup();
+
+		DS_Amogus.cleanup();
+		DS_Suzanne.cleanup();
+
+		DS_Amogus_card.cleanup();
+		DS_Suzanne_card.cleanup();
 
 		DS_ART_card.cleanup();
 		DS_cezanne_card.cleanup();
@@ -344,6 +390,12 @@ protected:
 		vgstar.cleanup();
 		volpedo.cleanup();
 
+		TX_Amogus.cleanup();
+		TX_Suzanne.cleanup();
+
+		TX_Amogus_card.cleanup();
+		TX_Suzanne_card.cleanup();
+
 
 		ART_card.cleanup();
 		cezanne_card.cleanup();
@@ -356,8 +408,8 @@ protected:
 		seurat_card.cleanup();
 		vgself_card.cleanup();
 		vgstar_card.cleanup();
-		volpedo_card.cleanup();
-
+		volpedo_card.cleanup();		
+		
 		TX_Walls.cleanup();
 		TX_Floor.cleanup();
 
@@ -365,6 +417,8 @@ protected:
 		M_Walls.cleanup();
 		M_Floor.cleanup();
 		M_Frame.cleanup();
+		M_Amogus.cleanup();
+		M_Suzanne.cleanup();
 
 		P1.cleanup();
 		DSLGlobal.cleanup();
@@ -374,46 +428,50 @@ protected:
 
 
 
+	
+	
+
+	
 	// Here it is the creation of the command buffer:
 	// You send to the GPU all the objects you want to draw,
 	// with their buffers and textures
 	void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
 
+		// Binding the Pipeline
+				
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, P1.graphicsPipeline);
+
+		// Binding the Global Descriptor Set to the pipeline
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 0, 1, &DS_Global.descriptorSets[currentImage],
 			0, nullptr);
 
-
 		//////////////////////////////////// W A L L S ///////////////////////////////////////////
-		// Draw commands for the walls
-		
-		// property .vertexBuffer of models, contains the VkBuffer handle to its vertex buffer
+
+		// property .pipelineLayout of a pipeline contains its layout.
+		// property .descriptorSets of a descriptor set contains its elements.
+
 		VkBuffer vertexBuffers_Walls[] = { M_Walls.vertexBuffer };
-		VkDeviceSize offsets_Walls[] = { 0 };
+		VkDeviceSize offsets_Walls[] = {0};
 
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Walls, offsets_Walls);
 
-		// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 		vkCmdBindIndexBuffer(commandBuffer, M_Walls.indexBuffer, 0,
 			VK_INDEX_TYPE_UINT32);
 
-		// property .descriptorSets of a descriptor set contains its elements.
-		// property .pipelineLayout of a pipeline contains its layout.
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_Walls.descriptorSets[currentImage],
 			0, nullptr);
-
+						
 		// property .indices.size() of models, contains the number of triangles * 3 of the mesh.
 		vkCmdDrawIndexed(commandBuffer,
-			static_cast<uint32_t>(M_Walls.indices.size()), 1, 0, 0, 0);
+					static_cast<uint32_t>(M_Walls.indices.size()), 1, 0, 0, 0);
 
-
+		
 		//////////////////////////////////////// F L O O R ///////////////////////////////////////////
-		// Draw commands for the floor
 
 		VkBuffer vertexBuffers_Floor[] = { M_Floor.vertexBuffer };
 		VkDeviceSize offsets_Floor[] = { 0 };
@@ -428,6 +486,7 @@ protected:
 			P1.pipelineLayout, 1, 1, &DS_Floor.descriptorSets[currentImage],
 			0, nullptr);
 
+		// property .indices.size() of models, contains the number of triangles * 3 of the mesh.
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Floor.indices.size()), 1, 0, 0, 0);
 
@@ -445,6 +504,8 @@ protected:
 
 		// A R T //
 
+		// Frame
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_ART.descriptorSets[currentImage],
@@ -452,6 +513,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -465,6 +528,8 @@ protected:
 
 		// M A N E T //
 
+		// Frame
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_manet.descriptorSets[currentImage],
@@ -472,6 +537,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -482,6 +549,8 @@ protected:
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
 		// M A T I S S E //
+		
+		// Frame
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -491,6 +560,8 @@ protected:
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
+		// Card
+		
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_matisse_card.descriptorSets[currentImage],
@@ -501,6 +572,7 @@ protected:
 
 		// M O N E T //
 
+		// Frame
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -509,6 +581,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -520,6 +594,7 @@ protected:
 
 		// M U N C H //
 
+		// Frame
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -528,6 +603,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -539,6 +616,8 @@ protected:
 
 		// P I C A S S O //
 
+		// Frame
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_picasso.descriptorSets[currentImage],
@@ -546,6 +625,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -557,6 +638,8 @@ protected:
 
 		// P I S A R R O //
 
+		// Frame
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_pisarro.descriptorSets[currentImage],
@@ -564,6 +647,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -575,6 +660,8 @@ protected:
 
 		// S E U R A T //
 
+		// Frame
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_seurat.descriptorSets[currentImage],
@@ -582,6 +669,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -593,6 +682,8 @@ protected:
 
 		// V A N  G O G H   S T A R //
 
+		// Frame
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_vgstar.descriptorSets[currentImage],
@@ -600,6 +691,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -611,6 +704,8 @@ protected:
 
 		// V A N  G O G H   S E L F //
 
+		// Frame
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_vgself.descriptorSets[currentImage],
@@ -618,6 +713,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -630,6 +727,8 @@ protected:
 
 		// C E Z A N N E //
 
+		// Frame
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_cezanne.descriptorSets[currentImage],
@@ -637,6 +736,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -648,6 +749,8 @@ protected:
 
 		// V O L P E D O //
 
+		// Frame
+
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
 			P1.pipelineLayout, 1, 1, &DS_volpedo.descriptorSets[currentImage],
@@ -655,6 +758,8 @@ protected:
 
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// Card
 
 		vkCmdBindDescriptorSets(commandBuffer,
 			VK_PIPELINE_BIND_POINT_GRAPHICS,
@@ -664,6 +769,69 @@ protected:
 		vkCmdDrawIndexed(commandBuffer,
 			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
 
+		// A M O N G  U S //
+
+		// Card
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Amogus_card.descriptorSets[currentImage],
+			0, nullptr);
+
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		// S U Z A N N E //
+
+		// Card
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Suzanne_card.descriptorSets[currentImage],
+			0, nullptr);
+
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Frame.indices.size()), 1, 0, 0, 0);
+
+		//////////////////////////////////////// S T A T U E S ///////////////////////////////////////////
+
+		// A M O N G  U S //
+
+		VkBuffer vertexBuffers_Amogus[] = { M_Amogus.vertexBuffer };
+		VkDeviceSize offsets_Amogus[] = { 0 };
+
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Amogus, offsets_Amogus);
+
+		vkCmdBindIndexBuffer(commandBuffer, M_Amogus.indexBuffer, 0,
+			VK_INDEX_TYPE_UINT32);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Amogus.descriptorSets[currentImage],
+			0, nullptr);
+
+		// property .indices.size() of models, contains the number of triangles * 3 of the mesh.
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Amogus.indices.size()), 1, 0, 0, 0);
+
+		// S U Z A N N E //
+
+		VkBuffer vertexBuffers_Suzanne[] = { M_Suzanne.vertexBuffer };
+		VkDeviceSize offsets_Suzanne[] = { 0 };
+
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Suzanne, offsets_Suzanne);
+
+		vkCmdBindIndexBuffer(commandBuffer, M_Suzanne.indexBuffer, 0,
+			VK_INDEX_TYPE_UINT32);
+
+		vkCmdBindDescriptorSets(commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			P1.pipelineLayout, 1, 1, &DS_Suzanne.descriptorSets[currentImage],
+			0, nullptr);
+
+		// property .indices.size() of models, contains the number of triangles * 3 of the mesh.
+		vkCmdDrawIndexed(commandBuffer,
+			static_cast<uint32_t>(M_Suzanne.indices.size()), 1, 0, 0, 0);
 	}
 
 
@@ -672,99 +840,128 @@ protected:
 
 	// Here is where you update the uniforms.
 	// Very likely this will be where you will be writing the logic of your application.
-	// Here we put all the code that interacts with the user
+
 	void updateUniformBuffer(uint32_t currentImage) {
 		static auto startTime = std::chrono::high_resolution_clock::now();
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>
-			(currentTime - startTime).count();
+					(currentTime - startTime).count();
 
 		static struct CameraAngle {
-			float x = 0.0f;
-			float y = 0.0f;
+		    float x = 0.0f;
+			float y = 90.0f;
 			float z = 0.0f;
 		} CamAngle;
 
 		static struct CameraPosition {
-			float x = 1.0f;
+			float x = 5.0f;
 			float y = -0.5f;
 			float z = 1.0f;
 		} CamPos;
 
-		const float W_speed = 0.01;
-		const float S_speed = 0.006;
+		static bool show_cards = 1;
+		static bool pressed = 0;
 
-		const float A_speed = 0.004;
-		const float D_speed = 0.004;
+		const float W_speed = 0.001;
+		const float S_speed = 0.0006;
 
-		const float rot_speed_v = 0.2*2; // vertical rotation
-		const float rot_speed_h = 0.6*2; // horizontal rotation
+		const float A_speed = 0.0004;
+		const float D_speed = 0.0004;
+
+		const float rot_speed_v = 0.02; // vertical rotation
+		const float rot_speed_h = 0.06; // horizontal rotation
+
 
 		glm::mat4 one_mat = glm::mat4(1.0f);
 
 		static glm::vec3 Translation = glm::vec3(0.0f, 0.0f, 0.0f);
 
+
+
 		////////////////////////// C O N T R O L S //////////////////////////
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
+		
 			CamPos.x -= W_speed * sin(glm::radians(CamAngle.y));
 			CamPos.z += W_speed * cos(glm::radians(CamAngle.y));
+			
+			
+
 		}
 		if (glfwGetKey(window, GLFW_KEY_A)) {
+
 			CamPos.z += A_speed * sin(glm::radians(CamAngle.y));
 			CamPos.x += W_speed * cos(glm::radians(CamAngle.y));
+		
 		}
 		if (glfwGetKey(window, GLFW_KEY_D)) {
+
 			CamPos.z -= A_speed * sin(glm::radians(CamAngle.y));
 			CamPos.x -= W_speed * cos(glm::radians(CamAngle.y));
+	
 		}
 		if (glfwGetKey(window, GLFW_KEY_S)) {
+
 			CamPos.x += S_speed * sin(glm::radians(CamAngle.y));
 			CamPos.z -= S_speed * cos(glm::radians(CamAngle.y));
+
 		}
-		if (glfwGetKey(window, GLFW_KEY_UP)) {
+
+		if (glfwGetKey(window, GLFW_KEY_UP) && CamAngle.x > -45.0f) {
+
 			CamAngle.x -= rot_speed_v;
 		}
 		if (glfwGetKey(window, GLFW_KEY_LEFT)) {
+
 			CamAngle.y -= rot_speed_h;
 		}
 		if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
+
 			CamAngle.y += rot_speed_h;
 		}
-		if (glfwGetKey(window, GLFW_KEY_DOWN)) {
+		if (glfwGetKey(window, GLFW_KEY_DOWN) && CamAngle.x < 45.0f) {
+
 			CamAngle.x += rot_speed_v;
 		}
 
-		static bool show_cards = false; 
-		if (glfwGetKey(window, GLFW_KEY_SPACE)) {
+		// State of the Frame Cards 
+
+		if (glfwGetKey(window, GLFW_KEY_SPACE) && pressed == 0) {
 			if (show_cards) {
 				show_cards = false;
-			} else {
+			}
+			else {
 				show_cards = true;
 			}
+			pressed = 1;
+		}
+
+		// Check so that it will not change state all thee time while keeping SPACE pressed
+
+		else if (!glfwGetKey(window, GLFW_KEY_SPACE) && pressed == 1) {
+
+			pressed = 0;
 		}
 
 		globalUniformBufferObject gubo{};
 		UniformBufferObject ubo{};
 
-		void* data;
-
+		void* data;		
 
 		gubo.view = glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.x), glm::vec3(1, 0, 0)) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.y), glm::vec3(0, 1, 0)) *
-			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.z), glm::vec3(0, 0, 1)) *
-			glm::translate(glm::mat4(1), glm::vec3(CamPos.x, CamPos.y, CamPos.z));
+					glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.y), glm::vec3(0, 1, 0)) *
+					glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.z), glm::vec3(0, 0, 1)) *
+					glm::translate(glm::mat4(1), glm::vec3(CamPos.x, CamPos.y, CamPos.z));
 
 
 		gubo.proj = glm::perspective(glm::radians(45.0f),
-			swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+					swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
 
 		gubo.proj[1][1] *= -1;
 
-		// Here is where you actually update your uniforms
 		// GLOBAL DESCRIPTOR SET
 		vkMapMemory(device, DS_Global.uniformBuffersMemory[0][currentImage], 0,
-			sizeof(gubo), 0, &data);
+							sizeof(gubo), 0, &data);
 		memcpy(data, &gubo, sizeof(gubo));
 		vkUnmapMemory(device, DS_Global.uniformBuffersMemory[0][currentImage]);
 
@@ -786,10 +983,59 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_Walls.uniformBuffersMemory[0][currentImage]);
 
+
+		////////////////////////// S T A T U E S //////////////////////////
+
+		// A M O N G  U S //
+
+		// Statue
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(2.6f, 0.03f, -0.3f));
+		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
+
+		vkMapMemory(device, DS_Amogus.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Amogus.uniformBuffersMemory[0][currentImage]);
+
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(2.6f, (1.05 + 5 * show_cards), -0.01f));
+		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
+
+		vkMapMemory(device, DS_Amogus_card.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Amogus_card.uniformBuffersMemory[0][currentImage]);
+
+		// S U Z A N N E //
+
+		// Statue
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-2.6f, 0.3f, -0.25f));
+		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.3, 0.3, 0.3));
+
+		vkMapMemory(device, DS_Suzanne.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Suzanne.uniformBuffersMemory[0][currentImage]);
+
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-2.6f, (1.0 + 5 * show_cards), -0.01f));
+		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
+
+		vkMapMemory(device, DS_Suzanne_card.uniformBuffersMemory[0][currentImage], 0,
+			sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(device, DS_Suzanne_card.uniformBuffersMemory[0][currentImage]);
+
 		////////////////////////// P I C T U R E S //////////////////////////
 
 		// A R T //
 
+		// Frame
+		
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 1.0f, 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
@@ -798,20 +1044,23 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_ART.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.35f, 1.99f));
+		// Card
+
+		// For the card positions, the Y coordinate is given by "0.35 + 5 * show_cards", so that if show_cards is 0 they teleport to 0.35, if it is 1 they are translated much further away
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, (0.35 + 5 * show_cards), 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
-		if (show_cards) {
-			ubo.model = glm::scale(ubo.model, glm::vec3(1.0f));
-		} else {
-			ubo.model = glm::scale(ubo.model, glm::vec3(0.0f));
-		}
+
 		vkMapMemory(device, DS_ART_card.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_ART_card.uniformBuffersMemory[0][currentImage]);
 
 
+
 		// M A N E T //
+
+		// Frame
 
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 1.0f, -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
@@ -821,7 +1070,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_manet.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, 0.35f, -1.99f));
+		// Card
+		
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, (0.35 + 5 * show_cards),- 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_manet_card.uniformBuffersMemory[0][currentImage], 0,
@@ -832,6 +1083,8 @@ protected:
 
 		// M A T I S S E // 
 
+		// Frame
+
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
@@ -840,7 +1093,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_matisse.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.35f, 1.99f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * show_cards), 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_matisse_card.uniformBuffersMemory[0][currentImage], 0,
@@ -848,8 +1103,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_matisse_card.uniformBuffersMemory[0][currentImage]);
 
-
 		// M O N E T //
+
+		// Frame
 
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
@@ -859,7 +1115,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_monet.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.35f, -1.99f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * show_cards), -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_monet_card.uniformBuffersMemory[0][currentImage], 0,
@@ -870,6 +1128,8 @@ protected:
 
 		// M U N C H //
 
+		// Frame
+
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.18, 0.4, 0.4));
 
@@ -878,7 +1138,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_munch.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.35f, 1.99f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * show_cards), 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_munch_card.uniformBuffersMemory[0][currentImage], 0,
@@ -889,6 +1151,8 @@ protected:
 
 		// P I C A S S O //
 
+		// Frame
+
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
@@ -897,7 +1161,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_picasso.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.35f, -1.99f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * show_cards), -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_picasso_card.uniformBuffersMemory[0][currentImage], 0,
@@ -908,6 +1174,8 @@ protected:
 
 		// P I S A R R O //
 
+		// Frame
+
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 1.0f, 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
@@ -916,7 +1184,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_pisarro.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.35f, 1.99f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, (0.35 + 5 * show_cards), 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_pisarro_card.uniformBuffersMemory[0][currentImage], 0,
@@ -927,6 +1197,8 @@ protected:
 
 		// S E U R A T //
 
+		// Frame
+
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 1.0f, -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
@@ -935,7 +1207,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_seurat.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 0.35f, -1.99f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, (0.35 + 5 * show_cards), -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_seurat_card.uniformBuffersMemory[0][currentImage], 0,
@@ -946,6 +1220,8 @@ protected:
 
 		// V A N  G O G H  S T A R R Y //
 
+		// Frame
+
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, -0.02f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
@@ -954,7 +1230,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_vgstar.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.35f, -0.02f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * show_cards), -0.02f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_vgstar_card.uniformBuffersMemory[0][currentImage], 0,
@@ -965,6 +1243,8 @@ protected:
 
 		// V A N  G O G H  S E L F //
 
+		// Frame
+
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, -0.02f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.18, 0.4, 0.2));
 
@@ -973,7 +1253,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_vgself.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.35f, -0.02f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * show_cards), -0.02f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_vgself_card.uniformBuffersMemory[0][currentImage], 0,
@@ -984,6 +1266,8 @@ protected:
 
 		// C E Z A N N E //
 
+		// Frame
+
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 1.0f, 0.1f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
@@ -992,7 +1276,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_cezanne.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, 0.35f, 0.1f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * show_cards), 0.1f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_cezanne_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1003,6 +1289,8 @@ protected:
 
 		// V O L P E D O //
 
+		// Frame
+
 		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 0.1f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
@@ -1011,7 +1299,9 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_volpedo.uniformBuffersMemory[0][currentImage]);
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.35f, 0.1f));
+		// Card
+
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * show_cards), 0.1f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_volpedo_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1019,26 +1309,19 @@ protected:
 		memcpy(data, &ubo, sizeof(ubo));
 		vkUnmapMemory(device, DS_volpedo_card.uniformBuffersMemory[0][currentImage]);
 
-	}
+	}	
 };
-
-
-
-
-
-
 
 // This is the main: probably you do not need to touch this!
 int main() {
-	MyProject app;
+    MyProject app;
 
-	try {
-		app.run();
-	}
-	catch (const std::exception& e) {
-		std::cerr << e.what() << std::endl;
-		return EXIT_FAILURE;
-	}
+    try {
+        app.run();
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
 
-	return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
