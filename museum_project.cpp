@@ -10,6 +10,8 @@ struct UniformBufferObject {
 	alignas(16) glm::mat4 model;
 } ubo;
 
+int GetRoom(float X, float Z);
+
 
 class MuseumProject : public BaseProject {
 protected:
@@ -50,7 +52,7 @@ protected:
 
 	// Here you set the main application parameters
 	void setWindowParameters() {
-		// window size, titile and initial background
+		// window size, title and initial background
 		windowWidth = 1600;
 		windowHeight = 900;
 		windowTitle = "The Computer Graphics Museum";
@@ -838,10 +840,6 @@ protected:
 			static_cast<uint32_t>(M_Suzanne.indices.size()), 1, 0, 0, 0);
 	}
 
-
-
-
-
 	// Here is where you update the uniforms.
 	// Very likely this will be where you will be writing the logic of your application.
 	// Here we put all the code that interacts with the user
@@ -853,12 +851,12 @@ protected:
 
 		static struct CameraAngle {
 			float x = 0.0f;
-			float y = 90.0f;
+			float y = -90.0f;
 			float z = 0.0f;
 		} CamAngle;
 
 		static struct CameraPosition {
-			float x = 5.0f;
+			float x = -5.0f;
 			float y = -0.5f;
 			float z = 1.0f;
 		} CamPos;
@@ -866,23 +864,32 @@ protected:
 		static bool show_cards = 1;
 		static bool pressed = 0;
 
-		const float W_speed = 0.001;
-		const float S_speed = 0.0006;
+		static bool card_1 = 1;
+		static bool card_2 = 1;
+		static bool card_3 = 1;
+		static bool card_4 = 1;
+		static bool card_5 = 1;
+		static bool card_6 = 1; 
+		static bool card_7 = 1;
+		static bool card_8 = 1;
 
-		const float A_speed = 0.0004;
-		const float D_speed = 0.0004;
+		const float W_speed = 0.003;
+		const float S_speed = 0.0009;
 
-		const float rot_speed_v = 0.02; // vertical rotation
-		const float rot_speed_h = 0.06; // horizontal rotation
+		const float A_speed = 0.0007;
+		const float D_speed = 0.0007;
+
+		const float rot_speed_v = 0.05; // vertical rotation
+		const float rot_speed_h = 0.09; // horizontal rotation
 
 
 		glm::mat4 one_mat = glm::mat4(1.0f);
 
 		static glm::vec3 Translation = glm::vec3(0.0f, 0.0f, 0.0f);
 
-
-
 		////////////////////////// C O N T R O L S //////////////////////////
+
+		// Movement controls depend on the Camera angle
 
 		if (glfwGetKey(window, GLFW_KEY_W)) {
 			CamPos.x -= W_speed * sin(glm::radians(CamAngle.y));
@@ -890,11 +897,11 @@ protected:
 		}
 		if (glfwGetKey(window, GLFW_KEY_A)) {
 			CamPos.z += A_speed * sin(glm::radians(CamAngle.y));
-			CamPos.x += W_speed * cos(glm::radians(CamAngle.y));
+			CamPos.x += A_speed * cos(glm::radians(CamAngle.y));
 		}
 		if (glfwGetKey(window, GLFW_KEY_D)) {
-			CamPos.z -= A_speed * sin(glm::radians(CamAngle.y));
-			CamPos.x -= W_speed * cos(glm::radians(CamAngle.y));
+			CamPos.z -= D_speed * sin(glm::radians(CamAngle.y));
+			CamPos.x -= D_speed * cos(glm::radians(CamAngle.y));
 		}
 		if (glfwGetKey(window, GLFW_KEY_S)) {
 			CamPos.x += S_speed * sin(glm::radians(CamAngle.y));
@@ -916,12 +923,28 @@ protected:
 
 		// State of the Frame Cards 
 		if (glfwGetKey(window, GLFW_KEY_SPACE) && pressed == 0) {
-			if (show_cards) {
-				show_cards = false;
-			} else {
-				show_cards = true;
-			}
+
+			// Cards will pop up, depending on the room
+
+			if (GetRoom(CamPos.x, CamPos.z) == 1)
+				card_1 = !card_1;
+			else if (GetRoom(CamPos.x, CamPos.z) == 2)
+				card_2 = !card_2;
+			else if (GetRoom(CamPos.x, CamPos.z) == 3)
+				card_3 = !card_3;
+			else if (GetRoom(CamPos.x, CamPos.z) == 4)
+				card_4 = !card_4;
+			else if (GetRoom(CamPos.x, CamPos.z) == 5)
+				card_5 = !card_5;
+			else if (GetRoom(CamPos.x, CamPos.z) == 6)
+				card_6 = !card_6;
+			else if (GetRoom(CamPos.x, CamPos.z) == 7)
+				card_7 = !card_7;
+			else if (GetRoom(CamPos.x, CamPos.z) == 8)
+				card_8 = !card_8;
+
 			pressed = 1;
+
 		// Check so that it will not change state all thee time while keeping SPACE pressed
 		} else if (!glfwGetKey(window, GLFW_KEY_SPACE) && pressed == 1) {
 			pressed = 0;
@@ -985,7 +1008,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(2.6f, (1.05 + 5 * show_cards), -0.01f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(2.6f, (1.05 + 5 * card_8), -0.01f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_Amogus_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1007,7 +1030,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-2.6f, (1.0 + 5 * show_cards), -0.01f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-2.6f, (1.0 + 5 * card_5), -0.01f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_Suzanne_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1033,7 +1056,7 @@ protected:
 
 		// For the card positions, the Y coordinate is given by "0.35 + 5 * show_cards", so that if show_cards is 0 they teleport to 0.35, if it is 1 they are translated much further away
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, (0.35 + 5 * show_cards), 1.99f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, (0.35 + 5 * card_1), 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_ART_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1057,7 +1080,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, (0.35 + 5 * show_cards), -1.99f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-3.0f, (0.35 + 5 * card_5), -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_manet_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1080,7 +1103,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * show_cards), 1.99f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * card_2), 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_matisse_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1102,7 +1125,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * show_cards), -1.99f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * card_6), -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_monet_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1125,7 +1148,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * show_cards), 1.99f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * card_3), 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_munch_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1148,7 +1171,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * show_cards), -1.99f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * card_7), -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_picasso_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1161,7 +1184,7 @@ protected:
 
 		// Frame
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, 1.0f, 1.99f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.2f, 1.0f, 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.4, 0.4, 0.4));
 
 		vkMapMemory(device, DS_pisarro.uniformBuffersMemory[0][currentImage], 0,
@@ -1171,7 +1194,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, (0.35 + 5 * show_cards), 1.99f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, (0.35 + 5 * card_4), 1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_pisarro_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1194,7 +1217,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, (0.35 + 5 * show_cards), -1.99f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(3.0f, (0.35 + 5 * card_8), -1.99f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_seurat_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1217,7 +1240,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * show_cards), -0.02f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * card_6), -0.02f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_vgstar_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1240,7 +1263,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * show_cards), -0.02f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * card_7), -0.02f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(180.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_vgself_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1263,7 +1286,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * show_cards), 0.1f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(-1.0f, (0.35 + 5 * card_2), 0.1f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_cezanne_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1286,7 +1309,7 @@ protected:
 
 		// Card
 
-		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * show_cards), 0.1f));
+		ubo.model = one_mat * glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, (0.35 + 5 * card_3), 0.1f));
 		ubo.model = ubo.model * glm::rotate(glm::mat4(1.0), glm::radians(0.0f), glm::vec3(0, 1, 0)) * glm::scale(one_mat, glm::vec3(0.1, 0.1, 0.1));
 
 		vkMapMemory(device, DS_volpedo_card.uniformBuffersMemory[0][currentImage], 0,
@@ -1296,6 +1319,43 @@ protected:
 
 	}
 };
+
+int GetRoom(float X, float Z) {
+
+	X = -X;
+
+	if (Z < 0.0f) {
+	
+		if ((-4.0f < X ) && (X < -2.0f)) {
+			return 1;
+		}
+		else if ((-2.0f < X) && (X < 0.0f)) {
+			return 2;
+		}	
+		else if ((0.0f < X) && (X < 2.0f)) {
+			return 3;
+		}
+		else if ((2.0f < X) && (X < 4.0f)) {
+			return 4;
+		}
+	}
+
+	else if (Z > 0.0f) {
+	
+		if ((-4.0f < X) && (X < -2.0f)) {
+			return 5;
+		}
+		else if ((-2.0f < X) && (X < 0.0f)) {
+			return 6;
+		}
+		else if ((0.0f < X) && (X < 2.0f)) {
+			return 7;
+		}
+		else if ((2.0f < X) && (X < 4.0f)) {
+			return 8;
+		}
+	}
+}
 
 // This is the main: probably you do not need to touch this!
 int main() {
