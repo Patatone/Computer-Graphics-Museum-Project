@@ -1,6 +1,8 @@
 #include "museum_project.hpp"
 
-// Define the uniform block that will be passed to the shaders
+// Define the uniform blocks that will be passed to the shaders. We splitted them because:
+// globalUniformBufferObject :	 changes per scene
+// UniformBufferObject :		 changes per object
 struct globalUniformBufferObject {
 	alignas(16) glm::mat4 view;
 	alignas(16) glm::mat4 proj;
@@ -869,10 +871,11 @@ protected:
 		static bool card_3 = 1;
 		static bool card_4 = 1;
 		static bool card_5 = 1;
-		static bool card_6 = 1; 
+		static bool card_6 = 1;
 		static bool card_7 = 1;
 		static bool card_8 = 1;
 
+		
 		const float W_speed = 0.003;
 		const float S_speed = 0.0009;
 
@@ -881,7 +884,13 @@ protected:
 
 		const float rot_speed_v = 0.05; // vertical rotation
 		const float rot_speed_h = 0.09; // horizontal rotation
+		
 
+		/*
+		const float W_speed = 0.015, S_speed = 0.015, A_speed = 0.015, D_speed = 0.015;
+		// vertical rotation and horizontal rotation
+		const float rot_speed_v = 1.2, rot_speed_h = 1.2;
+		*/
 
 		glm::mat4 one_mat = glm::mat4(1.0f);
 
@@ -945,8 +954,9 @@ protected:
 
 			pressed = 1;
 
-		// Check so that it will not change state all thee time while keeping SPACE pressed
-		} else if (!glfwGetKey(window, GLFW_KEY_SPACE) && pressed == 1) {
+			// Check so that it will not change state all thee time while keeping SPACE pressed
+		}
+		else if (!glfwGetKey(window, GLFW_KEY_SPACE) && pressed == 1) {
 			pressed = 0;
 		}
 
@@ -955,6 +965,7 @@ protected:
 
 		void* data;
 
+		// look-in-direction matrix
 		gubo.view = glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.x), glm::vec3(1, 0, 0)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.y), glm::vec3(0, 1, 0)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.z), glm::vec3(0, 0, 1)) *
@@ -1325,13 +1336,13 @@ int GetRoom(float X, float Z) {
 	X = -X;
 
 	if (Z < 0.0f) {
-	
-		if ((-4.0f < X ) && (X < -2.0f)) {
+
+		if ((-4.0f < X) && (X < -2.0f)) {
 			return 1;
 		}
 		else if ((-2.0f < X) && (X < 0.0f)) {
 			return 2;
-		}	
+		}
 		else if ((0.0f < X) && (X < 2.0f)) {
 			return 3;
 		}
@@ -1341,7 +1352,7 @@ int GetRoom(float X, float Z) {
 	}
 
 	else if (Z > 0.0f) {
-	
+
 		if ((-4.0f < X) && (X < -2.0f)) {
 			return 5;
 		}
