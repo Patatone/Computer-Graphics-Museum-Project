@@ -3,6 +3,7 @@
 // Define the uniform blocks that will be passed to the shaders. We splitted them because:
 // globalUniformBufferObject :	 changes per scene
 // UniformBufferObject :		 changes per object
+// alignas() needed because GPU memory might have different memory alignment
 struct globalUniformBufferObject {
 	alignas(16) glm::mat4 view;
 	alignas(16) glm::mat4 proj;
@@ -842,7 +843,7 @@ protected:
 			static_cast<uint32_t>(M_Suzanne.indices.size()), 1, 0, 0, 0);
 	}
 
-	// Here is where you update the uniforms.
+	// Here is where you update the uniforms. Useful to move objects or change the camera.
 	// Very likely this will be where you will be writing the logic of your application.
 	// Here we put all the code that interacts with the user
 	void updateUniformBuffer(uint32_t currentImage) {
@@ -978,10 +979,15 @@ protected:
 		gubo.proj[1][1] *= -1;
 
 		// GLOBAL DESCRIPTOR SET
-		// Here is where you actually update your uniforms
+		// Here is where you actually update your uniforms, copy the uniform buffer in the GPU memory.
+		// It's the only operation needed to update the values the Shaders will receive!
+		// 
+		// Acquiring a pointer to a memory area where the CPU can write data
 		vkMapMemory(device, DS_Global.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(gubo), 0, &data);
+		// Filling that memory area with the new values
 		memcpy(data, &gubo, sizeof(gubo));
+		// Trigger the update of the video memory
 		vkUnmapMemory(device, DS_Global.uniformBuffersMemory[0][currentImage]);
 
 		// Placing Floor
