@@ -84,10 +84,6 @@ protected:
 			{0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, VK_SHADER_STAGE_ALL_GRAPHICS},
 			});
 
-
-
-
-
 		// Initialize the Pipelines [Shader couples]
 		// The last array, is a vector of pointer to the layouts of the sets that will
 		// be used in this pipeline. The first element will be set 0, and so on..
@@ -445,7 +441,7 @@ protected:
 	// with their buffers and textures
 	void populateCommandBuffer(VkCommandBuffer commandBuffer, int currentImage) {
 
-		// Binding the Pipeline
+		// Binding the Pipeline to the command buffer
 
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, P1.graphicsPipeline);
 
@@ -463,7 +459,8 @@ protected:
 		VkBuffer vertexBuffers_Walls[] = { M_Walls.vertexBuffer };
 		VkDeviceSize offsets_Walls[] = { 0 };
 
-		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Walls, offsets_Walls);
+		vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers_Walls, offsets_Walls); // bind to command buffer
+
 		// property .indexBuffer of models, contains the VkBuffer handle to its index buffer
 		vkCmdBindIndexBuffer(commandBuffer, M_Walls.indexBuffer, 0,
 			VK_INDEX_TYPE_UINT32);
@@ -847,6 +844,8 @@ protected:
 	// Very likely this will be where you will be writing the logic of your application.
 	// Here we put all the code that interacts with the user
 	void updateUniformBuffer(uint32_t currentImage) {
+
+		// start up timing inside the program
 		static auto startTime = std::chrono::high_resolution_clock::now();
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>
@@ -880,8 +879,8 @@ protected:
 		const float W_speed = 0.003;
 		const float S_speed = 0.0009;
 
-		const float A_speed = 0.0007;
-		const float D_speed = 0.0007;
+		const float A_speed = 0.0014;
+		const float D_speed = 0.0014;
 
 		const float rot_speed_v = 0.05; // vertical rotation
 		const float rot_speed_h = 0.09; // horizontal rotation
@@ -963,15 +962,14 @@ protected:
 
 		globalUniformBufferObject gubo{};
 		UniformBufferObject ubo{};
-
 		void* data;
 
-		// look-in-direction matrix
+		// look-in-direction matrix, first person model, to implement what is seen by the camera
+
 		gubo.view = glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.x), glm::vec3(1, 0, 0)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.y), glm::vec3(0, 1, 0)) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(CamAngle.z), glm::vec3(0, 0, 1)) *
 			glm::translate(glm::mat4(1), glm::vec3(CamPos.x, CamPos.y, CamPos.z));
-
 
 		gubo.proj = glm::perspective(glm::radians(45.0f),
 			swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
@@ -992,7 +990,7 @@ protected:
 
 		// Placing Floor
 
-		ubo.model = glm::mat4(1.0f);
+		ubo.model = one_mat;
 
 		vkMapMemory(device, DS_Floor.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
@@ -1001,7 +999,7 @@ protected:
 
 		// Placing Walls
 
-		ubo.model = glm::mat4(1.0f);
+		ubo.model = one_mat;
 
 		vkMapMemory(device, DS_Walls.uniformBuffersMemory[0][currentImage], 0,
 			sizeof(ubo), 0, &data);
