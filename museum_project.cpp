@@ -858,7 +858,7 @@ protected:
 		} CamAngle;
 
 		static struct CameraPosition {
-			float x = -5.0f;
+			float x = -4.5f;
 			float y = -0.5f;
 			float z = 1.0f;
 		} CamPos;
@@ -875,7 +875,7 @@ protected:
 		static bool card_7 = 1;
 		static bool card_8 = 1;
 
-		
+		/*
 		const float W_speed = 0.003;
 		const float S_speed = 0.0009;
 
@@ -884,13 +884,13 @@ protected:
 
 		const float rot_speed_v = 0.05; // vertical rotation
 		const float rot_speed_h = 0.09; // horizontal rotation
-		
+		*/
 
-		/*
+		
 		const float W_speed = 0.015, S_speed = 0.015, A_speed = 0.015, D_speed = 0.015;
 		// vertical rotation and horizontal rotation
 		const float rot_speed_v = 1.2, rot_speed_h = 1.2;
-		*/
+		
 
 		glm::mat4 one_mat = glm::mat4(1.0f);
 

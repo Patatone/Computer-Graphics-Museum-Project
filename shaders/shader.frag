@@ -18,10 +18,20 @@ void main() {
 	vec3 R = -reflect(L, N);
 	vec3 V = normalize(fragViewDir);
 	
-	// Lambert diffuse
+	// LAMBERT (diffuse reflection model)
+	// Has only the diffuse part, which corresponds to a constant term
+	// Each point of the object hit by a ray reflect it with uniform probability in all directions
+	// N.B: the quantity of light is not costant but is proportional to the angle between the ray 
+	// and the normal vector of the x point (depends on the reflecting surface)
 	vec3 diffuse  = diffColor * max(dot(N,L), 0.0f);
-	// Phong specular
+	
+	// PHONG (specular reflection model)
+	// Specular reflection has same angle of incoming light ray w.r.t normal vector but oriented in opposite direction \|/
+	// also the sirection of the viewer is considered. In particular we are interested in the cosin of the angle between 
+	// the direction of the viewer and the direction of the reflection.
+	// This parameter enstablish the intensity of the specular reflection ( max reflection when viewer aligned with reflection direction, zero when 90 degree)
 	vec3 specular = specColor * pow(max(dot(R,V), 0.0f), specPower);
+	
 	// Hemispheric ambient
 	vec3 ambient  = (vec3(0.1f,0.1f, 0.1f) * (1.0f + N.y) + vec3(0.0f,0.0f, 0.1f) * (1.0f - N.y)) * diffColor;
 	
